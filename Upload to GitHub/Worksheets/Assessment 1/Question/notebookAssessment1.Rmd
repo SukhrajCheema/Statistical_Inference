@@ -1,0 +1,28 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+Lets install the relevant R libraries.
+
+```{r}
+library(fitdistrplus)
+install.packages("pastecs")
+
+```
+Read data into workspace.
+
+Identify which distribution generated which column. 
+Estimate the parameters of each distributions (e.g. Maximum Likelihood estimation). 
+You may want to use different plotting techniques and manipulation previously seen in class.
+
+```{r}
+Data <- read.csv("~/Coding/R/R Assessments/Statistical Inference/Assessment 1/R_assessment1_data.csv")
+
+```
+
+
+
+```{r}
+plot(cars)
+```
+

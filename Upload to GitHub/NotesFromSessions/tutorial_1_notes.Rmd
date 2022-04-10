@@ -1,0 +1,89 @@
+---
+title: "Practical_1"
+output: html_notebook
+---
+
+Generate realisations from a probability dsitribution. Continous and discrete.
+
+```{r}
+#Create variable for sample size.
+n_dataset <- 1000
+
+#Using the rnorm(), create instances of realisations from probability distributions. 
+gaussian1d_sample <- rnorm(n_dataset, mean=10, sd=2)
+binomial_sample <- rbinom(n_dataset, 10, 0.4)
+
+```
+
+Scatter plot of realisations against index for both 1D datasets.
+We are trying to understand which kind of distibutions we are looking at. The scatter plots (index vs value) tell us nothing. Now we attempt to plot histograms (value vs frequency).
+
+```{r}
+plot(binomial_sample,xlab="i", ylab="X_i", xlim = c(0, n_dataset-1), ylim= c(0,10), main="Binomial Sample")
+plot(gaussian1d_sample,xlab="i", ylab="X_i", xlim = c(0, n_dataset-1), ylim= c(5,15), main="Gaussian Sample")
+
+```
+
+Create visualisations of histograms.
+
+```{r}
+hist(binomial_sample, freq=TRUE, xlim=c(0,10), breaks=10)
+hist(gaussian1d_sample, freq=TRUE, breaks=20)
+
+```
+
+Now we analyse emperical cdf vs theoretical cdf for insight. 
+
+Given a dataset let X* be a r.v. obtained by picking one of the x_i at random. This is a discrete r.v. with pmf Pr(x) = 1/n(#datapoints<=x). This distribution is called the emperical distribution of the dataset. 
+
+Emperical modelling: emperical distribution is a perfect fit for the dataset. 
+
+
+
+```{r}
+#Emperical vs theoretical cdf
+
+#Create instances of emperical cdf's with varying sample sizes to observe the smootheness for larger samples. 
+gaussian_ecdf1 <- ecdf(gaussian1d_sample[1:50])
+gaussian_ecdf2 <- ecdf(gaussian1d_sample)
+
+#Create sequence of elements.
+x <- seq(from=10-6*2, to=10+6*2, length.out=1000)
+
+#Plot
+plot(x, gaussian_ecdf1(x), main="Emperical vs Theoretical cdfs")
+#plot(x, gaussian_ecdf2(x), main="Emperical vs Theoretical cdfs (whole dataset)")
+
+#Extra lines
+lines(x, gaussian_ecdf1(x), col="blue")
+```
+
+```{r}
+#Emperical vs theoretical quantile functions; allows us to see if a function follows a distribution is to plot the quantiles. 
+p <- seq(from=0, to=1, length.out=1000)
+plot(p, quantile(gaussian1d_sample[1:50], probs = p), type="l")
+lines(p, quantile(gaussian1d_sample[1:100], probs=p), col="blue")
+lines(p, quantile(gaussian1d_sample, probs=p), col="green")
+lines(p, qnorm(p, ,mean=10, sd=2), col="red")
+legend("topleft", legend=c("Emperical with n=50", "Emperical with n=100", "Emperical with n=1000", "Theoretical"), col=c("black", "blue", "green", "red"), lty=c(1,1,1,1))
+
+
+```
+
+Quantile plots are useful for investigating distributions. They are defined such that, at any point along the y axis, where can draw a line to contain a percentage of the data points. Quantiles have interesting properties, and are useful to look at when you don't know which distribution you are looking at. Can check to see if your dataset follows theoretical distribution.
+
+QQ-plots, are visulations of the emperical quantile vs theoretical quantile. If this follows a straight line, suggests datasets belong to the same distribution. 
+
+We observe that as you increase the sample size, plot becomes more linear and closer to a straight line.  
+```{r}
+#Quantile-quantile plots
+plot(quantile(gaussian1d_sample[1:50], probs = p), qnorm(p, mean=10, sd=2), type="l")
+lines(quantile(gaussian1d_sample[1:100], probs = p), qnorm(p, mean=10, sd=2), col="blue")
+lines(quantile(gaussian1d_sample, probs = p), qnorm(p, mean=10, sd=2), col="green")
+abline(a=0, b=1, col="red")
+legend("topleft", legend=c("Emperical with n=50", "Emperical with n=100", "Emperical with n=1000", "AB line"), col=c("black", "blue", "green", "red"), lty=c(1,1,1,1))
+```
+
+
+
+
